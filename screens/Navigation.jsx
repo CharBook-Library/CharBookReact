@@ -6,6 +6,7 @@ import HomeScreen from './HomeScreen';
 import LoginScreen from './LoginScreen';
 import ProfileScreen from './ProfileScreen';
 import RegisterScreen from './RegisterScreen';
+import AudioScreen from './AudioScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +23,7 @@ export default function Navigation() {
       <Stack.Screen name="Home"     component={HomeScreen}     />
       <Stack.Screen name="Crud"     component={CrudScreen}     />
       <Stack.Screen name="Profile"  component={ProfileScreen}  />
+      <Stack.Screen name="Audio"    component={AudioScreen}    />
     </Stack.Navigator>
   );
 }

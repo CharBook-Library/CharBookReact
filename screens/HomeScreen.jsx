@@ -1,222 +1,642 @@
 import React, { useState } from 'react';
 import {
-    ScrollView,
-    StyleSheet,
-    Text, TextInput, TouchableOpacity,
-    View
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
+
 import { colors } from '../constants/colors';
 
-const CATEGORIAS = ['Todos', 'Ficción', 'Historia', 'Ciencia', 'Poesía', 'Educación'];
-
-const LIBROS = [
-  { id: '1', titulo: 'Don Quijote',       autor: 'Cervantes',   tipo: 'libro',      emoji: '📖', categoria: 'Ficción'   },
-  { id: '2', titulo: 'Cien años de soledad', autor: 'García Márquez', tipo: 'audio', emoji: '🎧', categoria: 'Ficción'  },
-  { id: '3', titulo: 'Breve Historia del Tiempo', autor: 'Hawking', tipo: 'libro',   emoji: '📖', categoria: 'Ciencia'  },
-  { id: '4', titulo: 'El Arte de la Guerra', autor: 'Sun Tzu',   tipo: 'audio',      emoji: '🎧', categoria: 'Historia' },
-  { id: '5', titulo: 'Veinte poemas de amor', autor: 'Neruda',   tipo: 'libro',      emoji: '📖', categoria: 'Poesía'   },
-  { id: '6', titulo: 'Sapiens',            autor: 'Harari',      tipo: 'audio',      emoji: '🎧', categoria: 'Historia' },
+const CATEGORIAS = [
+  'Todos',
+  'Ficción',
+  'Historia',
+  'Ciencia',
+  'Poesía',
+  'Educación',
 ];
 
-export default function HomeScreen({ navigation }) {
-  const [busqueda, setBusqueda]     = useState('');
-  const [categoria, setCategoria]   = useState('Todos');
+const LIBROS = [
+  {
+    id: '1',
+    titulo: 'Don Quijote',
+    autor: 'Miguel de Cervantes',
+    tipo: 'libro',
+    emoji: '📖',
+    categoria: 'Ficción',
+  },
+  {
+    id: '2',
+    titulo: 'Cien años de soledad',
+    autor: 'Gabriel García Márquez',
+    tipo: 'audio',
+    emoji: '🎧',
+    categoria: 'Ficción',
+  },
+  {
+    id: '3',
+    titulo: 'Breve Historia del Tiempo',
+    autor: 'Stephen Hawking',
+    tipo: 'libro',
+    emoji: '📘',
+    categoria: 'Ciencia',
+  },
+  {
+    id: '4',
+    titulo: 'El Arte de la Guerra',
+    autor: 'Sun Tzu',
+    tipo: 'audio',
+    emoji: '🎧',
+    categoria: 'Historia',
+  },
+  {
+    id: '5',
+    titulo: 'Veinte poemas de amor',
+    autor: 'Pablo Neruda',
+    tipo: 'libro',
+    emoji: '📕',
+    categoria: 'Poesía',
+  },
+  {
+    id: '6',
+    titulo: 'Sapiens',
+    autor: 'Yuval Harari',
+    tipo: 'audio',
+    emoji: '🎧',
+    categoria: 'Historia',
+  },
+];
 
-  const librosFiltrados = LIBROS.filter(l =>
-    (categoria === 'Todos' || l.categoria === categoria) &&
-    (l.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
-     l.autor.toLowerCase().includes(busqueda.toLowerCase()))
-  );
+export default function HomeScreen({ navigation, route }) {
+
+  const user = route?.params?.user || {
+  name: 'Invitado',
+  email: 'Sin correo',
+};
+
+  const [busqueda, setBusqueda] = useState('');
+  const [categoria, setCategoria] = useState('Todos');
+
+  const librosFiltrados = LIBROS.filter((libro) => {
+
+    const coincideCategoria =
+      categoria === 'Todos' ||
+      libro.categoria === categoria;
+
+    const coincideBusqueda =
+      libro.titulo.toLowerCase().includes(busqueda.toLowerCase()) ||
+      libro.autor.toLowerCase().includes(busqueda.toLowerCase());
+
+    return coincideCategoria && coincideBusqueda;
+  });
 
   return (
-    <View style={s.screen}>
-      <ScrollView contentContainerStyle={s.container}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}>
 
-        {/* Header */}
+    <View style={s.screen}>
+
+      <ScrollView
+        contentContainerStyle={s.container}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={true}
+      >
+
+        {/* HEADER */}
+
         <View style={s.header}>
+
           <View>
-            <Text style={s.greeting}>Hola, Jafet 👋</Text>
-            <Text style={s.headerSub}>¿Qué quieres leer hoy?</Text>
+            <Text style={s.greeting}>
+              Hola, {user.name} 👋
+            </Text>
+
+            <Text style={s.headerSub}>
+              Descubre tu próxima lectura
+            </Text>
           </View>
-          <TouchableOpacity style={s.avatarBtn}
-            accessibilityRole="button"
-            accessibilityLabel="Ver perfil de usuario">
-            <Text style={s.avatarText}>JS</Text>
+
+          <TouchableOpacity
+            style={s.avatarBtn}
+            onPress={() =>
+              navigation.navigate('Profile', { user })
+            }
+          >
+            <Text style={s.avatarText}>
+              {user.name.charAt(0).toUpperCase()}
+            </Text>
           </TouchableOpacity>
+
         </View>
 
-        {/* Buscador */}
-        <View style={s.searchWrap}>
+        {/* BUSCADOR */}
+
+        <View style={s.searchContainer}>
+
           <Text style={s.searchIcon}>🔍</Text>
-          <TextInput style={s.searchInput}
-            value={busqueda} onChangeText={setBusqueda}
+
+          <TextInput
+            style={s.searchInput}
             placeholder="Buscar libros o autores..."
             placeholderTextColor={colors.textSubtle}
-            accessibilityLabel="Buscador de libros"
-            accessibilityHint="Escribe el título o autor que buscas"
-            returnKeyType="search" />
+            value={busqueda}
+            onChangeText={setBusqueda}
+          />
+
         </View>
 
-        {/* Continuar leyendo */}
-        <Text style={s.sectionTitle}>Continuar leyendo</Text>
-        <TouchableOpacity style={s.continueCard}
-          accessibilityRole="button"
-          accessibilityLabel="Continuar leyendo Don Quijote, página 42 de 863">
-          <View style={s.continueLeft}>
-            <View style={s.continueEmoji}>
-              <Text style={{ fontSize: 28 }}>📖</Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={s.continueTitle}>Don Quijote de la Mancha</Text>
-              <Text style={s.continueAuthor}>Miguel de Cervantes</Text>
-              <View style={s.progressBar}>
-                <View style={[s.progressFill, { width: '35%' }]} />
-              </View>
-              <Text style={s.progressText}>Página 42 de 863 · 35%</Text>
-            </View>
-          </View>
-          <Text style={s.continueArrow}>▶</Text>
-        </TouchableOpacity>
+        {/* CONTINUAR */}
 
-        {/* Categorías */}
-        <Text style={s.sectionTitle}>Categorías</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}
-          style={{ marginBottom: 16 }}
-          accessibilityRole="tablist">
-          {CATEGORIAS.map(cat => (
-            <TouchableOpacity key={cat}
-              style={[s.catChip, categoria === cat && s.catChipActive]}
-              onPress={() => setCategoria(cat)}
-              accessibilityRole="tab"
-              accessibilityState={{ selected: categoria === cat }}
-              accessibilityLabel={`Categoría ${cat}`}>
-              <Text style={[s.catText, categoria === cat && s.catTextActive]}>
-                {cat}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-
-        {/* Catálogo */}
         <Text style={s.sectionTitle}>
-          {categoria === 'Todos' ? 'Catálogo completo' : categoria}
-          <Text style={s.sectionCount}> ({librosFiltrados.length})</Text>
+          Continuar leyendo
         </Text>
 
-        <View style={s.grid}>
-          {librosFiltrados.map(libro => (
-            <TouchableOpacity key={libro.id} style={s.bookCard}
-              accessibilityRole="button"
-              accessibilityLabel={`${libro.titulo} de ${libro.autor}, ${libro.tipo === 'audio' ? 'audiolibro' : 'libro digital'}`}>
-              <View style={s.bookCover}>
-                <Text style={{ fontSize: 32 }}>{libro.emoji}</Text>
-              </View>
-              <Text style={s.bookTitle} numberOfLines={2}>{libro.titulo}</Text>
-              <Text style={s.bookAuthor} numberOfLines={1}>{libro.autor}</Text>
-              <View style={s.bookBadge}>
-                <Text style={s.bookBadgeText}>
-                  {libro.tipo === 'audio' ? '🎧 Audio' : '📖 Libro'}
-                </Text>
-              </View>
+        <TouchableOpacity style={s.continueCard}>
+
+          <View style={s.continueEmoji}>
+            <Text style={s.bigEmoji}>📖</Text>
+          </View>
+
+          <View style={s.continueInfo}>
+
+            <Text style={s.continueTitle}>
+              Don Quijote de la Mancha
+            </Text>
+
+            <Text style={s.continueAuthor}>
+              Miguel de Cervantes
+            </Text>
+
+            <View style={s.progressBar}>
+              <View style={s.progressFill} />
+            </View>
+
+            <Text style={s.progressText}>
+              Página 42 de 863 · 35%
+            </Text>
+
+          </View>
+
+        </TouchableOpacity>
+
+        {/* CATEGORÍAS */}
+
+        <Text style={s.sectionTitle}>
+          Categorías
+        </Text>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={s.categoriesRow}
+        >
+
+          {CATEGORIAS.map((cat) => (
+
+            <TouchableOpacity
+              key={cat}
+              style={[
+                s.categoryBtn,
+                categoria === cat && s.categoryBtnActive,
+              ]}
+              onPress={() => setCategoria(cat)}
+            >
+
+              <Text
+                style={[
+                  s.categoryText,
+                  categoria === cat && s.categoryTextActive,
+                ]}
+              >
+                {cat}
+              </Text>
+
             </TouchableOpacity>
+
           ))}
+
+        </ScrollView>
+
+        {/* CATÁLOGO */}
+
+        <View style={s.catalogHeader}>
+
+          <Text style={s.sectionTitle}>
+            {categoria}
+          </Text>
+
+          <Text style={s.countText}>
+            {librosFiltrados.length} libros
+          </Text>
+
         </View>
 
+        <View style={s.grid}>
+
+          {librosFiltrados.map((libro) => (
+
+            <TouchableOpacity
+              key={libro.id}
+              style={s.bookCard}
+            >
+
+              <View style={s.bookCover}>
+                <Text style={s.bookEmoji}>
+                  {libro.emoji}
+                </Text>
+              </View>
+
+              <Text
+                style={s.bookTitle}
+                numberOfLines={2}
+              >
+                {libro.titulo}
+              </Text>
+
+              <Text
+                style={s.bookAuthor}
+                numberOfLines={1}
+              >
+                {libro.autor}
+              </Text>
+
+              <View style={s.badge}>
+
+                <Text style={s.badgeText}>
+                  {libro.tipo === 'audio'
+                    ? '🎧 Audiolibro'
+                    : '📖 Libro'}
+                </Text>
+
+              </View>
+
+            </TouchableOpacity>
+
+          ))}
+
+        </View>
+
+        {/* VACÍO */}
+
         {librosFiltrados.length === 0 && (
-          <View style={s.empty}>
-            <Text style={{ fontSize: 40 }}>🔍</Text>
-            <Text style={s.emptyText}>No se encontraron resultados</Text>
+
+          <View style={s.emptyBox}>
+
+            <Text style={s.emptyEmoji}>
+              🔍
+            </Text>
+
+            <Text style={s.emptyText}>
+              No se encontraron resultados
+            </Text>
+
           </View>
+
         )}
 
       </ScrollView>
 
-      {/* Navbar inferior */}
-      <View style={s.navbar} accessibilityRole="tablist">
-  {[
-    { icon: '🏠', label: 'Inicio',     ruta: 'Home',    active: true  },
-    { icon: '📚', label: 'Biblioteca', ruta: 'Crud',    active: false },
-    { icon: '🎧', label: 'Audio',      ruta: 'Crud',    active: false },
-    { icon: '👤', label: 'Perfil',     ruta: 'Profile', active: false },
-  ].map(item => (
-    <TouchableOpacity key={item.label} style={s.navItem}
-      onPress={() => navigation.navigate(item.ruta)}
-      accessibilityRole="tab"
-      accessibilityState={{ selected: item.active }}
-      accessibilityLabel={item.label}>
-      <Text style={[s.navIcon, item.active && s.navIconActive]}>
-        {item.icon}
-      </Text>
-      <Text style={[s.navLabel, item.active && s.navLabelActive]}>
-        {item.label}
-      </Text>
-    </TouchableOpacity>
-  ))}
-</View>
+      {/* NAVBAR */}
+
+      <View style={s.navbar}>
+
+        {/* INICIO */}
+
+        <TouchableOpacity
+          style={s.navItem}
+          onPress={() => navigation.navigate('Home', { user })}
+        >
+          <Text style={s.navIconActive}>🏠</Text>
+          <Text style={s.navLabelActive}>Inicio</Text>
+        </TouchableOpacity>
+
+        {/* BIBLIOTECA */}
+
+        <TouchableOpacity
+          style={s.navItem}
+          onPress={() =>
+            navigation.navigate('Crud', { user })
+          }
+        >
+          <Text style={s.navIcon}>📚</Text>
+          <Text style={s.navLabel}>Biblioteca</Text>
+        </TouchableOpacity>
+
+        {/* AUDIO */}
+
+        <TouchableOpacity
+  style={s.navItem}
+  onPress={() =>
+    navigation.navigate('Audio', { user })
+  }
+>
+  <Text style={s.navIcon}>🎧</Text>
+  <Text style={s.navLabel}>Audio</Text>
+</TouchableOpacity>
+
+        {/* PERFIL */}
+
+        <TouchableOpacity
+          style={s.navItem}
+          onPress={() =>
+            navigation.navigate('Profile', { user })
+          }
+        >
+          <Text style={s.navIcon}>👤</Text>
+          <Text style={s.navLabel}>Perfil</Text>
+        </TouchableOpacity>
+
+      </View>
+
     </View>
   );
 }
 
 const s = StyleSheet.create({
-  screen:          { flex: 1, backgroundColor: colors.bg },
-  container:       { padding: 24, paddingBottom: 100 },
-  header:          { flexDirection: 'row', justifyContent: 'space-between',
-                     alignItems: 'center', marginBottom: 20 },
-  greeting:        { fontSize: 20, fontWeight: '600', color: colors.textPrimary },
-  headerSub:       { fontSize: 13, color: colors.textMuted, marginTop: 2 },
-  avatarBtn:       { width: 40, height: 40, borderRadius: 20,
-                     backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  avatarText:      { color: '#fff', fontWeight: '600', fontSize: 14 },
-  searchWrap:      { flexDirection: 'row', alignItems: 'center',
-                     backgroundColor: colors.surface, borderWidth: 1,
-                     borderColor: colors.border, borderRadius: 12,
-                     paddingHorizontal: 12, marginBottom: 24 },
-  searchIcon:      { fontSize: 16, marginRight: 8 },
-  searchInput:     { flex: 1, padding: 12, color: colors.textPrimary, fontSize: 14 },
-  sectionTitle:    { fontSize: 15, fontWeight: '600', color: colors.textPrimary, marginBottom: 12 },
-  sectionCount:    { fontWeight: '400', color: colors.textMuted },
-  continueCard:    { backgroundColor: colors.surface, borderWidth: 1,
-                     borderColor: colors.border, borderRadius: 16,
-                     padding: 14, flexDirection: 'row',
-                     alignItems: 'center', marginBottom: 24 },
-  continueLeft:    { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  continueEmoji:   { width: 52, height: 52, backgroundColor: colors.bg,
-                     borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  continueTitle:   { fontSize: 14, fontWeight: '600', color: colors.textPrimary, marginBottom: 2 },
-  continueAuthor:  { fontSize: 12, color: colors.textMuted, marginBottom: 8 },
-  progressBar:     { height: 4, backgroundColor: colors.border, borderRadius: 2, marginBottom: 4 },
-  progressFill:    { height: 4, backgroundColor: colors.primary, borderRadius: 2 },
-  progressText:    { fontSize: 11, color: colors.textMuted },
-  continueArrow:   { color: colors.primary, fontSize: 16 },
-  catChip:         { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-                     borderWidth: 1, borderColor: colors.border,
-                     backgroundColor: colors.surface, marginRight: 8 },
-  catChipActive:   { backgroundColor: colors.primary, borderColor: colors.primary },
-  catText:         { fontSize: 13, color: colors.textMuted },
-  catTextActive:   { color: '#fff', fontWeight: '500' },
-  grid:            { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  bookCard:        { width: '47%', backgroundColor: colors.surface,
-                     borderWidth: 1, borderColor: colors.border,
-                     borderRadius: 14, padding: 12 },
-  bookCover:       { width: '100%', height: 80, backgroundColor: colors.bg,
-                     borderRadius: 10, alignItems: 'center',
-                     justifyContent: 'center', marginBottom: 8 },
-  bookTitle:       { fontSize: 13, fontWeight: '600', color: colors.textPrimary, marginBottom: 2 },
-  bookAuthor:      { fontSize: 11, color: colors.textMuted, marginBottom: 8 },
-  bookBadge:       { backgroundColor: colors.bg, borderRadius: 6,
-                     paddingHorizontal: 8, paddingVertical: 3, alignSelf: 'flex-start' },
-  bookBadgeText:   { fontSize: 10, color: colors.accent },
-  empty:           { alignItems: 'center', paddingVertical: 40, gap: 12 },
-  emptyText:       { fontSize: 14, color: colors.textMuted },
-  navbar:          { position: 'absolute', bottom: 0, left: 0, right: 0,
-                     flexDirection: 'row', backgroundColor: colors.surface,
-                     borderTopWidth: 1, borderTopColor: colors.border,
-                     paddingBottom: 20, paddingTop: 10 },
-  navItem:         { flex: 1, alignItems: 'center', gap: 4 },
-  navIcon:         { fontSize: 20 },
-  navIconActive:   { },
-  navLabel:        { fontSize: 10, color: colors.textMuted },
-  navLabelActive:  { color: colors.accent, fontWeight: '500' },
+
+  screen: {
+    flex: 1,
+    backgroundColor: colors.bg,
+  },
+
+  container: {
+    padding: 20,
+    paddingBottom: 120,
+  },
+
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 24,
+  },
+
+  greeting: {
+    color: colors.textPrimary,
+    fontSize: 26,
+    fontWeight: '700',
+  },
+
+  headerSub: {
+    color: colors.textMuted,
+    marginTop: 6,
+    fontSize: 14,
+  },
+
+  avatarBtn: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  avatarText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surface,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 14,
+    marginBottom: 28,
+  },
+
+  searchIcon: {
+    fontSize: 18,
+    marginRight: 10,
+  },
+
+  searchInput: {
+    flex: 1,
+    color: colors.textPrimary,
+    paddingVertical: 16,
+    fontSize: 15,
+  },
+
+  sectionTitle: {
+    color: colors.textPrimary,
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 14,
+  },
+
+  continueCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 22,
+    padding: 18,
+    flexDirection: 'row',
+    marginBottom: 28,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+
+  continueEmoji: {
+    width: 70,
+    height: 70,
+    borderRadius: 18,
+    backgroundColor: colors.bg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+
+  bigEmoji: {
+    fontSize: 34,
+  },
+
+  continueInfo: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+
+  continueTitle: {
+    color: colors.textPrimary,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+
+  continueAuthor: {
+    color: colors.textMuted,
+    marginTop: 4,
+    marginBottom: 12,
+  },
+
+  progressBar: {
+    height: 6,
+    backgroundColor: colors.border,
+    borderRadius: 20,
+    overflow: 'hidden',
+  },
+
+  progressFill: {
+    width: '35%',
+    height: 6,
+    backgroundColor: colors.primary,
+  },
+
+  progressText: {
+    color: colors.textMuted,
+    marginTop: 8,
+    fontSize: 12,
+  },
+
+  categoriesRow: {
+    marginBottom: 24,
+  },
+
+  categoryBtn: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.border,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 30,
+    marginRight: 10,
+  },
+
+  categoryBtnActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+
+  categoryText: {
+    color: colors.textMuted,
+    fontWeight: '600',
+  },
+
+  categoryTextActive: {
+    color: '#fff',
+  },
+
+  catalogHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+
+  countText: {
+    color: colors.textMuted,
+  },
+
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+
+  bookCard: {
+    width: '48%',
+    backgroundColor: colors.surface,
+    borderRadius: 20,
+    padding: 14,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+
+  bookCover: {
+    height: 120,
+    borderRadius: 16,
+    backgroundColor: colors.bg,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+
+  bookEmoji: {
+    fontSize: 42,
+  },
+
+  bookTitle: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+
+  bookAuthor: {
+    color: colors.textMuted,
+    fontSize: 12,
+    marginBottom: 12,
+  },
+
+  badge: {
+    backgroundColor: colors.bg,
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    alignSelf: 'flex-start',
+  },
+
+  badgeText: {
+    color: colors.accent,
+    fontSize: 11,
+    fontWeight: '600',
+  },
+
+  emptyBox: {
+    alignItems: 'center',
+    paddingVertical: 50,
+  },
+
+  emptyEmoji: {
+    fontSize: 50,
+    marginBottom: 14,
+  },
+
+  emptyText: {
+    color: colors.textMuted,
+    fontSize: 15,
+  },
+
+  navbar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    backgroundColor: colors.surface,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    paddingTop: 12,
+    paddingBottom: 24,
+  },
+
+  navItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+
+  navIcon: {
+    fontSize: 22,
+  },
+
+  navIconActive: {
+    fontSize: 22,
+  },
+
+  navLabel: {
+    color: colors.textMuted,
+    marginTop: 4,
+    fontSize: 11,
+  },
+
+  navLabelActive: {
+    color: colors.accent,
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: '700',
+  },
+
 });
