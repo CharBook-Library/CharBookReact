@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Switch,
+    ScrollView,
+    StyleSheet,
+    Switch,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { colors } from '../constants/colors';
+import { FONT_SCALES, useAccessibility } from '../context/AccessibilityContext';
 
 export default function ProfileScreen({ navigation, route }) {
 
@@ -18,20 +19,16 @@ export default function ProfileScreen({ navigation, route }) {
     email: 'usuario@correo.com',
   };
 
-  const [fontSize, setFontSize] = useState('normal');
+  const { theme, fontScale, setFontScale, scaleFont, darkMode, setDarkMode, highContrast, setHighContrast } = useAccessibility();
   const [screenReader, setScreenReader] = useState(false);
-  const [highContrast, setHighContrast] = useState(false);
   const [voiceNav, setVoiceNav] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
   const [notifications, setNotifications] = useState(true);
-
-  const FONT_SIZES = ['pequeño', 'normal', 'grande', 'extra'];
 
   return (
 
     <ScrollView
-      style={s.screen}
-      contentContainerStyle={s.container}
+      style={[s.screen, { backgroundColor: theme.bg }]}
+      contentContainerStyle={[s.container, { backgroundColor: theme.bg }]}
       showsVerticalScrollIndicator={false}
     >
 
@@ -47,7 +44,7 @@ export default function ProfileScreen({ navigation, route }) {
           <Text style={s.backBtn}>←</Text>
         </TouchableOpacity>
 
-        <Text style={s.headerTitle}>
+        <Text style={[s.headerTitle, { color: theme.textPrimary, fontSize: scaleFont(20) }] }>
           Mi Perfil
         </Text>
 
@@ -55,7 +52,7 @@ export default function ProfileScreen({ navigation, route }) {
 
       {/* PERFIL */}
 
-      <View style={s.profileCard}>
+      <View style={[s.profileCard, { backgroundColor: theme.surface, borderColor: theme.border }] }>
 
         <View style={s.avatar}>
 
@@ -67,11 +64,11 @@ export default function ProfileScreen({ navigation, route }) {
 
         <View style={s.profileInfo}>
 
-          <Text style={s.profileName}>
+          <Text style={[s.profileName, { color: theme.textPrimary, fontSize: scaleFont(18) }] }>
             {user.name}
           </Text>
 
-          <Text style={s.profileEmail}>
+          <Text style={[s.profileEmail, { color: theme.textMuted }] }>
             {user.email}
           </Text>
 
@@ -136,49 +133,36 @@ export default function ProfileScreen({ navigation, route }) {
 
       {/* ACCESIBILIDAD */}
 
-      <Text style={s.sectionTitle}>
+<Text style={[s.sectionTitle, { color: theme.textPrimary }] }>
         ♿ Accesibilidad
       </Text>
 
-      <View style={s.card}>
+      <View style={[s.card, { backgroundColor: theme.surface, borderColor: theme.border }] }>
 
-        <Text style={s.optLabel}>
+        <Text style={[s.optLabel, { fontSize: scaleFont(13) }] }>
           Tamaño de texto
         </Text>
 
-        <View style={s.fontRow}>
-
-          {FONT_SIZES.map((size) => (
-
-            <TouchableOpacity
-              key={size}
-              style={[
-                s.fontBtn,
-                fontSize === size &&
-                s.fontBtnActive,
-              ]}
-              onPress={() =>
-                setFontSize(size)
-              }
-            >
-
-              <Text
-                style={[
-                  s.fontBtnText,
-                  fontSize === size &&
-                  s.fontBtnTextActive,
-                ]}
-              >
-                A
+        <View style={s.fontRow} accessibilityRole="radiogroup">
+          {Object.keys(FONT_SCALES).map(size => (
+            <TouchableOpacity key={size}
+              style={[s.fontBtn, fontScale === size && s.fontBtnActive]}
+              onPress={() => setFontScale(size)}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: fontScale === size }}
+              accessibilityLabel={`Texto ${size}`}>
+              <Text style={[s.fontBtnText,
+                fontScale === size && s.fontBtnTextActive,
+                { fontSize: scaleFont(11) }]}>
+                {size === 'pequeño' ? 'A' :
+                 size === 'normal'  ? 'A' :
+                 size === 'grande'  ? 'A' : 'A'}
               </Text>
-
             </TouchableOpacity>
-
           ))}
-
         </View>
 
-        <Text style={s.fontPreview}>
+        <Text style={[s.fontPreview, { fontSize: scaleFont(13) }]}>
           Vista previa del texto seleccionado
         </Text>
 
@@ -251,17 +235,17 @@ export default function ProfileScreen({ navigation, route }) {
 
       {/* PREFERENCIAS */}
 
-      <Text style={s.sectionTitle}>
+<Text style={[s.sectionTitle, { color: theme.textPrimary }] }>
         ⚙️ Preferencias
       </Text>
 
-      <View style={s.card}>
+      <View style={[s.card, { backgroundColor: theme.surface, borderColor: theme.border }] }>
 
         {[
           {
             icon: '🌙',
             label: 'Modo oscuro',
-            desc: 'Tema oscuro para lectura',
+            desc: 'Tema oscuro para leer de noche',
             value: darkMode,
             set: setDarkMode,
           },
@@ -317,11 +301,11 @@ export default function ProfileScreen({ navigation, route }) {
 
       {/* CUENTA */}
 
-      <Text style={s.sectionTitle}>
+<Text style={[s.sectionTitle, { color: theme.textPrimary }] }>
         👤 Cuenta
       </Text>
 
-      <View style={s.card}>
+      <View style={[s.card, { backgroundColor: theme.surface, borderColor: theme.border }] }>
 
         {[
           {

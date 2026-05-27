@@ -3,18 +3,19 @@
 import React, { useState } from 'react';
 
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  StatusBar,
-  ImageBackground,
+    ImageBackground,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 const colors = {
   bg: '#020617',
@@ -53,6 +54,7 @@ export default function RegisterScreen({ navigation }) {
   const [accepted, setAccepted] = useState(false);
 
   const [plan, setPlan] = useState('free');
+  const { theme, scaleFont } = useAccessibility();
 
   const passwordMatch =
     password === confirm && confirm.length > 0;
@@ -89,7 +91,7 @@ export default function RegisterScreen({ navigation }) {
         style={s.overlay}
       >
 
-        <SafeAreaView style={s.screen}>
+        <SafeAreaView style={[s.screen, { backgroundColor: theme.bg }]}> 
 
           <StatusBar
             translucent
@@ -98,7 +100,7 @@ export default function RegisterScreen({ navigation }) {
           />
 
           <ScrollView
-            contentContainerStyle={s.scroll}
+            contentContainerStyle={[s.scroll, { backgroundColor: theme.bg }]}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={true}
           >
@@ -117,18 +119,18 @@ export default function RegisterScreen({ navigation }) {
 
               </LinearGradient>
 
-              <Text style={s.title}>
+              <Text style={[s.title, { color: theme.textPrimary, fontSize: scaleFont(22) }] }>
                 Crear cuenta
               </Text>
 
-              <Text style={s.subtitle}>
+              <Text style={[s.subtitle, { color: theme.textMuted, fontSize: scaleFont(13) }] }>
                 Únete y empieza a leer hoy
               </Text>
 
             </View>
 
             {/* CARD */}
-            <View style={s.card}>
+            <View style={[s.card, { backgroundColor: theme.surface, borderColor: theme.border }] }>
 
               {/* NAME */}
               <Text style={s.label}>
@@ -138,11 +140,16 @@ export default function RegisterScreen({ navigation }) {
               <View style={s.inputWrap}>
 
                 <TextInput
-                  style={s.input}
+                  style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
                   placeholder="Tu nombre y apellido"
-                  placeholderTextColor={colors.textSubtle}
+                  placeholderTextColor={theme.textSubtle}
                   value={name}
                   onChangeText={setName}
+                  accessible={true}
+                  importantForAccessibility="yes"
+                  accessibilityLabel="Nombre completo"
+                  accessibilityHint="Ingresa tu nombre y apellido"
+                  returnKeyType="next"
                 />
 
                 <Text style={s.icon}>
@@ -159,13 +166,18 @@ export default function RegisterScreen({ navigation }) {
               <View style={s.inputWrap}>
 
                 <TextInput
-                  style={s.input}
+                  style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
                   placeholder="usuario@correo.com"
-                  placeholderTextColor={colors.textSubtle}
+                  placeholderTextColor={theme.textSubtle}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={email}
                   onChangeText={setEmail}
+                  accessible={true}
+                  importantForAccessibility="yes"
+                  accessibilityLabel="Correo electrónico"
+                  accessibilityHint="Ingresa tu correo electrónico registrado"
+                  returnKeyType="next"
                 />
 
                 <Text style={s.icon}>
@@ -182,12 +194,17 @@ export default function RegisterScreen({ navigation }) {
               <View style={s.inputWrap}>
 
                 <TextInput
-                  style={s.input}
+                  style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
                   placeholder="Mínimo 8 caracteres"
-                  placeholderTextColor={colors.textSubtle}
+                  placeholderTextColor={theme.textSubtle}
                   secureTextEntry={!showPass}
                   value={password}
                   onChangeText={setPassword}
+                  accessible={true}
+                  importantForAccessibility="yes"
+                  accessibilityLabel="Contraseña"
+                  accessibilityHint="Ingresa una contraseña de al menos 8 caracteres"
+                  returnKeyType="next"
                 />
 
                 <TouchableOpacity
@@ -255,8 +272,8 @@ export default function RegisterScreen({ navigation }) {
                     confirm.length > 0 && {
 
                       borderColor: passwordMatch
-                        ? colors.success
-                        : colors.danger,
+                        ? theme.success
+                        : theme.danger,
                     },
                   ]}
                   placeholder="Repite tu contraseña"
@@ -264,6 +281,11 @@ export default function RegisterScreen({ navigation }) {
                   secureTextEntry={!showConf}
                   value={confirm}
                   onChangeText={setConfirm}
+                  accessible={true}
+                  importantForAccessibility="yes"
+                  accessibilityLabel="Confirmar contraseña"
+                  accessibilityHint="Repite la contraseña para confirmar"
+                  returnKeyType="done"
                 />
 
                 <TouchableOpacity

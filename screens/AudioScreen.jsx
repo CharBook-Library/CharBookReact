@@ -1,13 +1,14 @@
 import React from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { colors } from '../constants/colors';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 const AUDIOS = [
   {
@@ -33,9 +34,11 @@ export default function AudioScreen({ navigation, route }) {
     name: 'Invitado',
   };
 
+  const { theme } = useAccessibility();
+
   return (
 
-    <View style={s.screen}>
+    <View style={[s.screen, { backgroundColor: theme.bg }] }>
 
       <View style={s.header}>
 
@@ -54,7 +57,7 @@ export default function AudioScreen({ navigation, route }) {
       </View>
 
       <ScrollView
-        contentContainerStyle={s.container}
+        contentContainerStyle={[s.container, { backgroundColor: theme.bg }]}
         showsVerticalScrollIndicator={false}
       >
 

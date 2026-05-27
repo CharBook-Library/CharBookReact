@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { colors } from '../constants/colors';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 const CATEGORIAS = [
   'Todos',
@@ -77,6 +78,7 @@ export default function HomeScreen({ navigation, route }) {
   email: 'Sin correo',
 };
 
+  const { theme, scaleFont } = useAccessibility();
   const [busqueda, setBusqueda] = useState('');
   const [categoria, setCategoria] = useState('Todos');
 
@@ -95,10 +97,10 @@ export default function HomeScreen({ navigation, route }) {
 
   return (
 
-    <View style={s.screen}>
+    <View style={[s.screen, { backgroundColor: theme.bg }] }>
 
       <ScrollView
-        contentContainerStyle={s.container}
+        contentContainerStyle={[s.container, { backgroundColor: theme.bg }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={true}
       >
@@ -108,11 +110,11 @@ export default function HomeScreen({ navigation, route }) {
         <View style={s.header}>
 
           <View>
-            <Text style={s.greeting}>
+            <Text style={[s.greeting, { color: theme.textPrimary, fontSize: scaleFont(20) }] }>
               Hola, {user.name} 👋
             </Text>
 
-            <Text style={s.headerSub}>
+            <Text style={[s.headerSub, { color: theme.textMuted, fontSize: scaleFont(13) }] }>
               Descubre tu próxima lectura
             </Text>
           </View>
@@ -137,22 +139,27 @@ export default function HomeScreen({ navigation, route }) {
           <Text style={s.searchIcon}>🔍</Text>
 
           <TextInput
-            style={s.searchInput}
+            style={[s.searchInput, { backgroundColor: theme.surface, borderColor: theme.border }]}
             placeholder="Buscar libros o autores..."
-            placeholderTextColor={colors.textSubtle}
+            placeholderTextColor={theme.textSubtle}
             value={busqueda}
             onChangeText={setBusqueda}
+            accessible={true}
+            importantForAccessibility="yes"
+            accessibilityLabel="Buscar libros o autores"
+            accessibilityHint="Ingresa texto para filtrar la lista de libros y autores"
+            returnKeyType="search"
           />
 
         </View>
 
         {/* CONTINUAR */}
 
-        <Text style={s.sectionTitle}>
+        <Text style={[s.sectionTitle, { color: theme.textPrimary, fontSize: scaleFont(16) }] }>
           Continuar leyendo
         </Text>
 
-        <TouchableOpacity style={s.continueCard}>
+        <TouchableOpacity style={[s.continueCard, { backgroundColor: theme.surface }] }>
 
           <View style={s.continueEmoji}>
             <Text style={s.bigEmoji}>📖</Text>

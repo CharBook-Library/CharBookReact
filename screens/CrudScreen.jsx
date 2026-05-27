@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  ScrollView,
-  Alert,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import { colors } from '../constants/colors';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 const INITIAL_LIBROS = [
   {
@@ -49,6 +50,7 @@ const EMPTY = {
 };
 
 export default function CrudScreen({ navigation }) {
+  const { theme, scaleFont } = useAccessibility();
   const [libros, setLibros] = useState(INITIAL_LIBROS);
   const [form, setForm] = useState(EMPTY);
   const [editId, setEditId] = useState(null);
@@ -148,17 +150,17 @@ export default function CrudScreen({ navigation }) {
   if (vista === 'form') {
     return (
       <ScrollView
-        style={s.screen}
-        contentContainerStyle={s.container}
+        style={[s.screen, { backgroundColor: theme.bg }]}
+        contentContainerStyle={[s.container, { backgroundColor: theme.bg }]}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
         <View style={s.formHeader}>
           <TouchableOpacity onPress={cancelar}>
-            <Text style={s.backBtn}>← Volver</Text>
+            <Text style={[s.backBtn, { color: theme.textPrimary, fontSize: scaleFont(14) }]}>← Volver</Text>
           </TouchableOpacity>
 
-          <Text style={s.formTitle}>
+          <Text style={[s.formTitle, { color: theme.textPrimary, fontSize: scaleFont(18) }] }>
             {editId ? 'Editar libro' : 'Nuevo libro'}
           </Text>
         </View>
@@ -167,39 +169,54 @@ export default function CrudScreen({ navigation }) {
         <Text style={s.label}>Título</Text>
 
         <TextInput
-          style={s.input}
+          style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
           value={form.titulo}
           onChangeText={(v) =>
             setForm({ ...form, titulo: v })
           }
           placeholder="Nombre del libro"
-          placeholderTextColor={colors.textSubtle}
+          placeholderTextColor={theme.textSubtle}
+          accessible={true}
+          importantForAccessibility="yes"
+          accessibilityLabel="Título del libro"
+          accessibilityHint="Ingresa el título del libro"
+          returnKeyType="next"
         />
 
         {/* AUTOR */}
         <Text style={s.label}>Autor</Text>
 
         <TextInput
-          style={s.input}
+          style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
           value={form.autor}
           onChangeText={(v) =>
             setForm({ ...form, autor: v })
           }
           placeholder="Autor del libro"
-          placeholderTextColor={colors.textSubtle}
+          placeholderTextColor={theme.textSubtle}
+          accessible={true}
+          importantForAccessibility="yes"
+          accessibilityLabel="Autor del libro"
+          accessibilityHint="Ingresa el nombre del autor"
+          returnKeyType="next"
         />
 
         {/* CATEGORIA */}
         <Text style={s.label}>Categoría</Text>
 
         <TextInput
-          style={s.input}
+          style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
           value={form.categoria}
           onChangeText={(v) =>
             setForm({ ...form, categoria: v })
           }
           placeholder="Ej. Ciencia"
-          placeholderTextColor={colors.textSubtle}
+          placeholderTextColor={theme.textSubtle}
+          accessible={true}
+          importantForAccessibility="yes"
+          accessibilityLabel="Categoría"
+          accessibilityHint="Ingresa la categoría del libro"
+          returnKeyType="done"
         />
 
         {/* TIPO */}
@@ -266,19 +283,19 @@ export default function CrudScreen({ navigation }) {
   // =========================
 
   return (
-    <View style={s.screen}>
+    <View style={[s.screen, { backgroundColor: theme.bg }] }>
       <ScrollView
-        contentContainerStyle={s.container}
+        contentContainerStyle={[s.container, { backgroundColor: theme.bg }]}
         showsVerticalScrollIndicator={false}
       >
         {/* HEADER */}
         <View style={s.header}>
           <View>
-            <Text style={s.title}>
+            <Text style={[s.title, { color: theme.textPrimary, fontSize: scaleFont(20) }] }>
               Gestión de libros
             </Text>
 
-            <Text style={s.subtitle}>
+            <Text style={[s.subtitle, { color: theme.textMuted, fontSize: scaleFont(13) }] }>
               {libros.length} libros en catálogo
             </Text>
           </View>
@@ -302,12 +319,17 @@ export default function CrudScreen({ navigation }) {
           <Text style={s.searchIcon}>🔍</Text>
 
           <TextInput
-            style={s.searchInput}
-            value={busqueda}
-            onChangeText={setBusqueda}
-            placeholder="Buscar libro..."
-            placeholderTextColor={colors.textSubtle}
-          />
+              style={s.searchInput}
+              value={busqueda}
+              onChangeText={setBusqueda}
+              placeholder="Buscar libro..."
+              placeholderTextColor={colors.textSubtle}
+              accessible={true}
+              importantForAccessibility="yes"
+              accessibilityLabel="Buscar libro"
+              accessibilityHint="Ingresa texto para filtrar los libros"
+              returnKeyType="search"
+            />
 
           {busqueda.length > 0 && (
             <TouchableOpacity

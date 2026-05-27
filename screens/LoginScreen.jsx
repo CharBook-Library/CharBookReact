@@ -3,19 +3,21 @@
 import React, { useState } from 'react';
 
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  StatusBar,
-  SafeAreaView,
-  ImageBackground,
-  ScrollView,
-  Image,
+    Image,
+    ImageBackground,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 
 import { LinearGradient } from 'expo-linear-gradient';
+import AccessibilityBar from '../components/AccessibilityBar';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 const colors = {
   bg: '#030712',
@@ -42,6 +44,7 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [tab, setTab] = useState('correo');
+  const { theme, scaleFont } = useAccessibility();
 
   return (
 
@@ -62,7 +65,7 @@ export default function LoginScreen({ navigation }) {
         style={s.overlay}
       >
 
-        <SafeAreaView style={s.screen}>
+        <SafeAreaView style={[s.screen, { backgroundColor: theme.bg }]}> 
 
           <StatusBar
             translucent
@@ -71,7 +74,7 @@ export default function LoginScreen({ navigation }) {
           />
 
           <ScrollView
-            contentContainerStyle={s.scroll}
+            contentContainerStyle={[s.scroll, { backgroundColor: theme.bg }]}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
@@ -97,16 +100,18 @@ export default function LoginScreen({ navigation }) {
                 Tu biblioteca inteligente
               </Text>
 
+              <Text style={[s.appName, { fontSize: scaleFont(18) }]}>BiblioIA</Text>
+
             </View>
 
             {/* CARD */}
-            <View style={s.card}>
+            <View style={[s.card, { backgroundColor: theme.surface, borderColor: theme.border }] }>
 
-              <Text style={s.welcome}>
+              <Text style={[s.welcome, { color: theme.textPrimary, fontSize: scaleFont(22) }] }>
                 Bienvenido de vuelta
               </Text>
 
-              <Text style={s.welcomeSub}>
+              <Text style={[s.welcomeSub, { color: theme.textMuted, fontSize: scaleFont(13) }] }>
                 Inicia sesión para continuar leyendo
               </Text>
 
@@ -172,13 +177,18 @@ export default function LoginScreen({ navigation }) {
               </Text>
 
               <TextInput
-                style={s.input}
+                style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
                 placeholder="Correo electrónico"
-                placeholderTextColor={colors.textSubtle}
+                placeholderTextColor={theme.textSubtle}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                accessible={true}
+                importantForAccessibility="yes"
+                accessibilityLabel="Correo electrónico"
+                accessibilityHint="Ingresa tu correo registrado"
+                returnKeyType="next"
               />
 
               {/* PASSWORD */}
@@ -189,12 +199,17 @@ export default function LoginScreen({ navigation }) {
               <View>
 
                 <TextInput
-                  style={s.input}
+                  style={[s.input, { backgroundColor: theme.surface, borderColor: theme.border }]}
                   placeholder="Contraseña"
-                  placeholderTextColor={colors.textSubtle}
+                  placeholderTextColor={theme.textSubtle}
                   secureTextEntry={!showPass}
                   value={password}
                   onChangeText={setPassword}
+                  accessible={true}
+                  importantForAccessibility="yes"
+                  accessibilityLabel="Contraseña"
+                  accessibilityHint="Ingresa tu contraseña"
+                  returnKeyType="done"
                 />
 
                 <TouchableOpacity
@@ -258,6 +273,8 @@ export default function LoginScreen({ navigation }) {
                 </TouchableOpacity>
 
               </View>
+
+              <AccessibilityBar onPress={(opcion) => console.log('Activar:', opcion)} />
 
             </View>
 
@@ -337,6 +354,12 @@ const s = StyleSheet.create({
     color: colors.textMuted,
     marginTop: 4,
     fontSize: 14,
+  },
+
+  appName: {
+    color: '#fff',
+    fontWeight: '700',
+    marginTop: 6,
   },
 
   card: {
@@ -536,6 +559,43 @@ const s = StyleSheet.create({
     color: colors.accent,
     fontWeight: '700',
     fontSize: 13,
+  },
+
+  /* ACCESIBILIDAD */
+
+  accBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    marginTop: 28,
+
+    backgroundColor: '#0B1220',
+
+    borderRadius: 18,
+
+    paddingVertical: 14,
+    paddingHorizontal: 10,
+
+    borderWidth: 1,
+    borderColor: '#1E293B',
+  },
+
+  accBtn: {
+    flex: 1,
+    alignItems: 'center',
+  },
+
+  accIcon: {
+    fontSize: 20,
+    marginBottom: 4,
+  },
+
+  accLabel: {
+    color: '#CBD5E1',
+    fontSize: 11,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 
 });

@@ -1,23 +1,16 @@
-// constants/colors.js
-
+// Colores base — usar solo como fallback
+// En las pantallas usa siempre: const { theme } = useAccessibility()
 export const colors = {
-  bg: '#030712',
-
-  surface: '#0F172A',
-  card: 'rgba(15, 23, 42, 0.88)',
-
-  border: 'rgba(255,255,255,0.06)',
-
-  primary: '#7C3AED',
-  secondary: '#6D5DFC',
-
-  accent: '#22D3EE',
-
-  textPrimary: '#F8FAFC',
-  textMuted: '#94A3B8',
-  textSubtle: '#64748B',
-
-  inputBg: '#111827',
-
-  white: '#FFFFFF',
+  bg:          '#0F0E1A',
+  surface:     '#1A1730',
+  border:      '#2A2545',
+  primary:     '#4B3FD8',
+  secondary:   '#7C3AED',
+  textPrimary: '#E8E2FF',
+  textMuted:   '#7B6FA8',
+  textSubtle:  '#4A4268',
+  accent:      '#9E8FE8',
+  success:     '#22C55E',
+  warning:     '#F59E0B',
+  danger:      '#EF4444',
 };
